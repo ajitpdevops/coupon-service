@@ -1,4 +1,6 @@
-FROM openjdk:11
+FROM openjdk:11 AS build
+
+WORKDIR /app
 
 # ARGUMENTS
 ARG MAVEN_VERSION=3.6.3
@@ -20,5 +22,21 @@ ENV MAVEN_HOME /usr/share/maven
 ENV MAVEN_CONFIG "$USER_HOME_DIR/.m2"
 ENV PATH="$JAVA_HOME/bin:$MAVEN_HOME:${PATH}"
 
-ENTRYPOINT [ "mvn" ]
-#CMD exec /bin/bash -c "trap : TERM INT; sleep infinity & wait"
+COPY pom.xml .
+COPY src ./src
+
+# Download the project dependencies
+RUN mvn dependency:go-offline -B
+
+# Build the application using Maven
+RUN mvn package -DskipTests
+
+
+# Create a new image with the application jar only
+FROM openjdk:11
+
+WORKDIR /app
+
+COPY --from=build /app/target/*.jar app.jar
+
+ENTRYPOINT [ "java", "-jar", "app.jar" ]
