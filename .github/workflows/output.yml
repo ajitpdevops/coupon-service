@@ -1,8 +1,13 @@
 name: Github Information
 on: workflow_dispatch
 jobs:
-    info:
+    params:
+        name: "Set Environment Variables"
         runs-on: ubuntu-latest
+        outputs:
+            github: ${{ steps.env-vars.outputs.env_vars }}
         steps:
-            - name: Output Github Context
-              run: echo "${{ toJson(github) }}"
+            - name: env-vars
+              run: 
+
+              
