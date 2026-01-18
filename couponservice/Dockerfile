@@ -1,4 +1,4 @@
-FROM openjdk:11 AS build
+FROM openjdk:25 AS build
 
 WORKDIR /app
 
@@ -33,7 +33,7 @@ RUN mvn package -DskipTests
 
 
 # Create a new image with the application jar only
-FROM openjdk:11
+FROM openjdk:25
 
 WORKDIR /app
 
